@@ -1,5 +1,5 @@
 {
-  "name": "Quesada Inmobiliaria - Embudo Captacion Vendedores Fiscal & Notarial",
+  "name": "Quesada Inmobiliaria - Embudo Propietarios a Inmovilla CRM",
   "nodes": [
     {
       "parameters": {
@@ -11,10 +11,40 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 1,
       "position": [
-        240,
+        220,
         300
       ],
       "webhookId": "lead-vendedor-quesada"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.inmovilla.com/v1/leads",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer TU_API_KEY_INMOVILLA_AQUI"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"numagencia\": 7066,\n  \"keyagente\": 92003,\n  \"tipo\": \"propietario\",\n  \"accion\": \"vender\",\n  \"nombre\": \"{{ $json.body.lead.name }}\",\n  \"telefono\": \"{{ $json.body.lead.phone }}\",\n  \"email\": \"{{ $json.body.lead.email }}\",\n  \"poblacion\": \"{{ $json.body.property_financials.city }}\",\n  \"precio\": {{ $json.body.financial_breakdown.sale_price }},\n  \"origen\": \"Embudo Fiscal Quesada Inmobiliaria\",\n  \"idioma\": \"{{ $json.body.language || 'es' }}\",\n  \"observaciones\": \"=== NUEVO PROPIETARIO - CALCULADORA FISCAL ===\\n- Población: {{ $json.body.property_financials.city }}\\n- Precio deseado: {{ $json.body.financial_breakdown.sale_price }} €\\n- Saldo Neto Estimado: {{ $json.body.financial_breakdown.net_proceeds }} €\\n- Exención +65 años: {{ $json.body.financial_breakdown.is_senior_exempt ? 'SÍ (Ahorro: ' + $json.body.financial_breakdown.senior_savings + ' € en IRPF)' : 'NO' }}\\n- Régimen No Residente: {{ $json.body.financial_breakdown.is_non_resident ? 'SÍ (Retención 3%: ' + $json.body.financial_breakdown.non_resident_retention_3 + ' €)' : 'NO' }}\\n- Hipoteca a liquidar: {{ $json.body.financial_breakdown.total_mortgage_outflow }} €\\n- Urgencia de venta: {{ $json.body.mortgage_and_costs.sale_urgency }}\\n- Cualificación: {{ $json.body.lead_scoring.label }}\"\n}",
+        "options": {}
+      },
+      "name": "Crear Contacto en Inmovilla CRM",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        500,
+        180
+      ]
     },
     {
       "parameters": {
@@ -32,15 +62,15 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 1,
       "position": [
-        480,
-        300
+        500,
+        380
       ]
     },
     {
       "parameters": {
         "operation": "append",
         "sheetId": "TU_GOOGLE_SHEET_ID_AQUI",
-        "range": "Leads!A:K",
+        "range": "Leads!A:L",
         "options": {},
         "fieldsUi": {
           "fieldValues": [
@@ -59,6 +89,10 @@
             {
               "fieldId": "Email",
               "fieldValue": "={{ $json.body.lead.email }}"
+            },
+            {
+              "fieldId": "Idioma",
+              "fieldValue": "={{ $json.body.language || 'es' }}"
             },
             {
               "fieldId": "Ciudad",
@@ -83,6 +117,10 @@
             {
               "fieldId": "Prioridad",
               "fieldValue": "={{ $json.body.lead_scoring.label }}"
+            },
+            {
+              "fieldId": "CRM Inmovilla",
+              "fieldValue": "Sincronizado Agencia 7066"
             }
           ]
         }
@@ -91,14 +129,14 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4,
       "position": [
-        740,
-        220
+        780,
+        340
       ]
     },
     {
       "parameters": {
         "chatId": "TU_TELEGRAM_CHAT_ID_O_CANAL",
-        "text": "=🏢 *QUESADA INMOBILIARIA - NUEVO PROPIETARIO 🔥*\n\n👤 *Propietario:* {{ $json.body.lead.name }}\n📱 *Teléfono:* [{{ $json.body.lead.phone }}](https://wa.me/{{ $json.body.lead.phone.replace(/[^0-9]/g, '') }})\n📧 *Email:* {{ $json.body.lead.email }}\n\n📍 *Ubicación:* {{ $json.body.property_financials.city }}\n💶 *Precio Venta:* {{ $json.body.financial_breakdown.sale_price.toLocaleString('es-ES') }} €\n💰 *LÍQUIDO NETO CALCULADO:* {{ $json.body.financial_breakdown.net_proceeds.toLocaleString('es-ES') }} €\n\n{{ $json.body.financial_breakdown.is_senior_exempt ? '🎉 *EXENCIÓN +65 AÑOS:* ¡Ahorro de ' + $json.body.financial_breakdown.senior_savings.toLocaleString('es-ES') + ' € en IRPF!' : '⚖️ *IRPF Estimado:* ' + $json.body.financial_breakdown.irpf_tax_amount.toLocaleString('es-ES') + ' €' }}\n🏦 *Carga Hipotecaria a Cancelar:* {{ $json.body.financial_breakdown.total_mortgage_outflow.toLocaleString('es-ES') }} €\n🏛️ *Plusvalía Municipal:* {{ $json.body.financial_breakdown.plusvalia_municipal.toLocaleString('es-ES') }} €\n\n🏷️ *Cualificación:* {{ $json.body.lead_scoring.label }}\n⏱ *Plazo de Venta:* {{ $json.body.mortgage_and_costs.sale_urgency }}\n\n👉 [Contactar por WhatsApp ahora](https://wa.me/{{ $json.body.lead.phone.replace(/[^0-9]/g, '') }}?text=Hola%20{{ encodeURIComponent($json.body.lead.name) }},%20soy%20Juan%20Pedro%20de%20Quesada%20Inmobiliaria.%20He%20revisado%20tu%20simulaci%C3%B3n%20para%20{{ encodeURIComponent($json.body.property_financials.city) }})",
+        "text": "=🏢 *QUESADA INMOBILIARIA - NUEVO PROPIETARIO 🔥*\n*(Sincronizado automáticamente en Inmovilla CRM)*\n\n👤 *Propietario:* {{ $json.body.lead.name }}\n📱 *Teléfono:* [{{ $json.body.lead.phone }}](https://wa.me/{{ $json.body.lead.phone.replace(/[^0-9]/g, '') }})\n📧 *Email:* {{ $json.body.lead.email }}\n🌐 *Idioma:* {{ $json.body.language === 'en' ? '🇬🇧 English' : '🇪🇸 Español' }}\n\n📍 *Ubicación:* {{ $json.body.property_financials.city }}\n💶 *Precio Venta:* {{ $json.body.financial_breakdown.sale_price.toLocaleString('es-ES') }} €\n💰 *LÍQUIDO NETO CALCULADO:* {{ $json.body.financial_breakdown.net_proceeds.toLocaleString('es-ES') }} €\n\n{{ $json.body.financial_breakdown.is_senior_exempt ? '🎉 *EXENCIÓN +65 AÑOS:* ¡Ahorro de ' + $json.body.financial_breakdown.senior_savings.toLocaleString('es-ES') + ' € en IRPF!' : '⚖️ *IRPF Estimado:* ' + $json.body.financial_breakdown.irpf_tax_amount.toLocaleString('es-ES') + ' €' }}\n{{ $json.body.financial_breakdown.is_non_resident ? '🌍 *NO RESIDENTE:* Retención 3% Notaría (' + $json.body.financial_breakdown.non_resident_retention_3.toLocaleString('es-ES') + ' €)\n' : '' }}🏦 *Carga Hipotecaria a Cancelar:* {{ $json.body.financial_breakdown.total_mortgage_outflow.toLocaleString('es-ES') }} €\n🏛️ *Plusvalía Municipal:* {{ $json.body.financial_breakdown.plusvalia_municipal.toLocaleString('es-ES') }} €\n\n🏷️ *Cualificación:* {{ $json.body.lead_scoring.label }}\n⏱ *Plazo de Venta:* {{ $json.body.mortgage_and_costs.sale_urgency }}\n\n👉 [Contactar por WhatsApp ahora](https://wa.me/{{ $json.body.lead.phone.replace(/[^0-9]/g, '') }}?text=Hola%20{{ encodeURIComponent($json.body.lead.name) }},%20soy%20Juan%20Pedro%20de%20Quesada%20Inmobiliaria.%20He%20revisado%20tu%20simulaci%C3%B3n%20para%20{{ encodeURIComponent($json.body.property_financials.city) }})",
         "additionalFields": {
           "parse_mode": "Markdown"
         }
@@ -107,14 +145,14 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1,
       "position": [
-        980,
-        220
+        1040,
+        340
       ]
     },
     {
       "parameters": {
         "chatId": "TU_TELEGRAM_CHAT_ID_O_CANAL",
-        "text": "=ℹ️ *Quesada Inmobiliaria - Lead Secundario*\n\n👤 *Nombre:* {{ $json.body.lead.name }}\n📱 *Teléfono:* {{ $json.body.lead.phone }}\n📍 *Municipio:* {{ $json.body.property_financials.city }}\n💶 *Venta:* {{ $json.body.financial_breakdown.sale_price.toLocaleString('es-ES') }} €\n💰 *Neto:* {{ $json.body.financial_breakdown.net_proceeds.toLocaleString('es-ES') }} €\n🏷️ *Nivel:* {{ $json.body.lead_scoring.label }}",
+        "text": "=ℹ️ *Quesada Inmobiliaria - Lead Secundario*\n*(Guardado en Inmovilla CRM)*\n\n👤 *Nombre:* {{ $json.body.lead.name }}\n📱 *Teléfono:* {{ $json.body.lead.phone }}\n📍 *Municipio:* {{ $json.body.property_financials.city }}\n💶 *Venta:* {{ $json.body.financial_breakdown.sale_price.toLocaleString('es-ES') }} €\n💰 *Neto:* {{ $json.body.financial_breakdown.net_proceeds.toLocaleString('es-ES') }} €\n🏷️ *Nivel:* {{ $json.body.lead_scoring.label }}",
         "additionalFields": {
           "parse_mode": "Markdown"
         }
@@ -123,8 +161,8 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1,
       "position": [
-        740,
-        420
+        780,
+        500
       ]
     }
   ],
@@ -132,6 +170,11 @@
     "Webhook Entrada Quesada": {
       "main": [
         [
+          {
+            "node": "Crear Contacto en Inmovilla CRM",
+            "type": "main",
+            "index": 0
+          },
           {
             "node": "Es Lead Prioridad Alta?",
             "type": "main",
