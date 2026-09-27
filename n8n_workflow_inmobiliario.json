@@ -1,0 +1,173 @@
+{
+  "name": "Embudo Captacion Vendedores Inmobiliarios - Fiscal & Notarial",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "lead-vendedor-inmobiliario",
+        "options": {}
+      },
+      "name": "Webhook Entrada Embudo",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        240,
+        300
+      ],
+      "webhookId": "lead-vendedor-inmobiliario"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.body.lead_scoring.category }}",
+              "operation": "equal",
+              "value2": "A"
+            }
+          ]
+        }
+      },
+      "name": "Es Lead Prioridad Alta?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        480,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "sheetId": "TU_GOOGLE_SHEET_ID_AQUI",
+        "range": "Leads!A:K",
+        "options": {},
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "Fecha",
+              "fieldValue": "={{ $json.body.timestamp }}"
+            },
+            {
+              "fieldId": "Nombre",
+              "fieldValue": "={{ $json.body.lead.name }}"
+            },
+            {
+              "fieldId": "Telefono",
+              "fieldValue": "={{ $json.body.lead.phone }}"
+            },
+            {
+              "fieldId": "Email",
+              "fieldValue": "={{ $json.body.lead.email }}"
+            },
+            {
+              "fieldId": "Ciudad",
+              "fieldValue": "={{ $json.body.property_financials.city }}"
+            },
+            {
+              "fieldId": "Precio Venta",
+              "fieldValue": "={{ $json.body.financial_breakdown.sale_price }} €"
+            },
+            {
+              "fieldId": "Neto Limpio",
+              "fieldValue": "={{ $json.body.financial_breakdown.net_proceeds }} €"
+            },
+            {
+              "fieldId": "Exencion +65",
+              "fieldValue": "={{ $json.body.financial_breakdown.is_senior_exempt ? 'SI (' + $json.body.financial_breakdown.senior_savings + '€ ahorro)' : 'NO' }}"
+            },
+            {
+              "fieldId": "Hipoteca",
+              "fieldValue": "={{ $json.body.financial_breakdown.total_mortgage_outflow }} €"
+            },
+            {
+              "fieldId": "Prioridad",
+              "fieldValue": "={{ $json.body.lead_scoring.label }}"
+            }
+          ]
+        }
+      },
+      "name": "Guardar en Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [
+        740,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "TU_TELEGRAM_CHAT_ID_O_CANAL",
+        "text": "=🔥 *¡NUEVA CAPTACIÓN PRIORITARIA DE PROPIETARIO!* 🔥\n\n👤 *Propietario:* {{ $json.body.lead.name }}\n📱 *Teléfono:* [{{ $json.body.lead.phone }}](https://wa.me/{{ $json.body.lead.phone.replace(/[^0-9]/g, '') }})\n📧 *Email:* {{ $json.body.lead.email }}\n\n📍 *Ubicación:* {{ $json.body.property_financials.city }}\n💶 *Precio de Venta Deseado:* {{ $json.body.financial_breakdown.sale_price.toLocaleString('es-ES') }} €\n💰 *LÍQUIDO NETO CALCULADO:* {{ $json.body.financial_breakdown.net_proceeds.toLocaleString('es-ES') }} €\n\n{{ $json.body.financial_breakdown.is_senior_exempt ? '🎉 *EXENCIÓN +65 AÑOS:* ¡Ahorro de ' + $json.body.financial_breakdown.senior_savings.toLocaleString('es-ES') + ' € en IRPF!' : '⚖️ *IRPF Estimado:* ' + $json.body.financial_breakdown.irpf_tax_amount.toLocaleString('es-ES') + ' €' }}\n🏦 *Carga Hipotecaria a Cancelar:* {{ $json.body.financial_breakdown.total_mortgage_outflow.toLocaleString('es-ES') }} €\n🏛️ *Plusvalía Municipal:* {{ $json.body.financial_breakdown.plusvalia_municipal.toLocaleString('es-ES') }} €\n\n🏷️ *Cualificación:* {{ $json.body.lead_scoring.label }}\n⏱ *Plazo de Venta:* {{ $json.body.mortgage_and_costs.sale_urgency }}\n\n👉 [Contactar por WhatsApp ahora](https://wa.me/{{ $json.body.lead.phone.replace(/[^0-9]/g, '') }}?text=Hola%20{{ encodeURIComponent($json.body.lead.name) }},%20hemos%20revisado%20tu%20simulación%20fiscal%20para%20{{ encodeURIComponent($json.body.property_financials.city) }})",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "name": "Alerta Telegram Equipo Comercial",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        980,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "TU_TELEGRAM_CHAT_ID_O_CANAL",
+        "text": "=ℹ️ *Nuevo Lead Informativo (Templado/Curioso)*\n\n👤 *Nombre:* {{ $json.body.lead.name }}\n📱 *Teléfono:* {{ $json.body.lead.phone }}\n📍 *Ciudad:* {{ $json.body.property_financials.city }}\n💶 *Venta:* {{ $json.body.financial_breakdown.sale_price.toLocaleString('es-ES') }} €\n💰 *Neto:* {{ $json.body.financial_breakdown.net_proceeds.toLocaleString('es-ES') }} €\n🏷️ *Nivel:* {{ $json.body.lead_scoring.label }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "name": "Alerta Telegram Lead Secundario",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        740,
+        420
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook Entrada Embudo": {
+      "main": [
+        [
+          {
+            "node": "Es Lead Prioridad Alta?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Es Lead Prioridad Alta?": {
+      "main": [
+        [
+          {
+            "node": "Guardar en Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Alerta Telegram Lead Secundario",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guardar en Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Alerta Telegram Equipo Comercial",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

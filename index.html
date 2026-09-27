@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora de Beneficio Neto | ¿Cuánto te queda limpio al vender tu casa?</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .step-transition { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col justify-between">
+
+  <!-- Header / Barra de Confianza -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
+    <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-2">
+        <div class="w-9 h-9 rounded-lg bg-emerald-600 flex items-center justify-center text-white font-bold shadow-md shadow-emerald-200">
+          <i data-lucide="calculator" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <span class="text-base font-extrabold text-slate-800 tracking-tight">Neto<span class="text-emerald-600">Vivienda</span></span>
+          <span class="hidden sm:inline-block ml-2 text-xs font-medium text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">Simulador Notarial & Fiscal</span>
+        </div>
+      </div>
+      <div class="flex items-center space-x-3 text-xs sm:text-sm text-slate-500 font-medium">
+        <span class="flex items-center text-emerald-600 font-semibold"><i data-lucide="shield-check" class="w-4 h-4 mr-1"></i> IRPF • Plusvalía • Hipoteca</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Contenedor Principal del Embudo -->
+  <main class="flex-grow max-w-3xl w-full mx-auto px-4 py-6 sm:py-10">
+    
+    <!-- Hero / Gancho inicial -->
+    <div id="funnel-intro" class="text-center mb-6">
+      <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold mb-2.5 border border-emerald-100">
+        <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Fiscalidad Inmobiliaria España 2026
+      </div>
+      <h1 class="text-2xl sm:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight">
+        ¿Cuánto dinero te quedará <span class="text-emerald-600 underline decoration-emerald-300 decoration-2">REALMENTE limpio</span> tras vender tu casa?
+      </h1>
+      <p class="mt-2 text-xs sm:text-sm text-slate-600 max-w-xl mx-auto">
+        Calcula el saldo exacto que entrará en tu cuenta bancaria después de pagar IRPF, Plusvalía Municipal, cancelación de hipoteca, comisiones y gastos notariales.
+      </p>
+    </div>
+
+    <!-- Barra de Progreso del Embudo -->
+    <div id="progress-container" class="mb-5 bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm">
+      <div class="flex justify-between items-center text-xs font-semibold text-slate-500 mb-1.5">
+        <span id="step-label">Paso 1 de 4: Precios de la Operación</span>
+        <span id="progress-percentage" class="text-emerald-600">25% completado</span>
+      </div>
+      <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+        <div id="progress-bar" class="bg-emerald-500 h-2 rounded-full transition-all duration-500" style="width: 25%"></div>
+      </div>
+    </div>
+
+    <!-- Formulario Multi-paso -->
+    <form id="lead-funnel-form" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8">
+
+      <!-- PASO 1: Precios de Compra y Venta (Base de Ganancia Patrimonial) -->
+      <section id="step-1" class="step-transition space-y-4">
+        <div>
+          <h2 class="text-lg sm:text-xl font-bold text-slate-800 flex items-center gap-2">
+            <i data-lucide="badge-euro" class="w-5 h-5 text-emerald-600"></i> Precios de la Operación
+          </h2>
+          <p class="text-xs text-slate-500">Necesitamos estos valores para calcular la ganancia patrimonial exacta sujeta a IRPF.</p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Precio Estimado o Deseado de Venta (€) *</label>
+            <div class="relative">
+              <input type="number" id="sale_price" name="sale_price" min="30000" step="1000" value="260000" required class="w-full pl-4 pr-10 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 font-semibold text-base text-slate-900">
+              <span class="absolute right-3.5 top-3 text-slate-400 font-bold text-sm">€</span>
+            </div>
+            <span class="text-[11px] text-slate-400">Por cuánto esperas o deseas vender el inmueble.</span>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Precio al que se compró o heredó (€) *</label>
+            <div class="relative">
+              <input type="number" id="purchase_price" name="purchase_price" min="10000" step="1000" value="150000" required class="w-full pl-4 pr-10 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 font-semibold text-base text-slate-900">
+              <span class="absolute right-3.5 top-3 text-slate-400 font-bold text-sm">€</span>
+            </div>
+            <span class="text-[11px] text-slate-400">Valor reflejado en la escritura original o de herencia.</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Municipio o Ciudad del Inmueble *</label>
+            <input type="text" id="property_city" name="property_city" required value="Madrid" placeholder="Ej. Madrid, Málaga, Valencia..." class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 text-sm">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Años que lleva el inmueble en tu propiedad</label>
+            <select name="years_held" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 text-sm">
+              <option value="2">Menos de 5 años</option>
+              <option value="8" selected>Entre 5 y 15 años</option>
+              <option value="18">Entre 15 y 20 años</option>
+              <option value="25">Más de 20 años</option>
+            </select>
+            <span class="text-[11px] text-slate-400">Determina el coeficiente de la Plusvalía Municipal.</span>
+          </div>
+        </div>
+
+        <div class="flex justify-end pt-3">
+          <button type="button" onclick="validateAndGoStep(2)" class="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl shadow-md flex items-center gap-2 transition">
+            Continuar a Fiscalidad <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </section>
+
+      <!-- PASO 2: Fiscalidad, Mayores de 65 años y Residencia Fiscal -->
+      <section id="step-2" class="step-transition space-y-4 hidden">
+        <div>
+          <h2 class="text-lg sm:text-xl font-bold text-slate-800 flex items-center gap-2">
+            <i data-lucide="landmark" class="w-5 h-5 text-emerald-600"></i> Situación Fiscal y Posibles Exenciones
+          </h2>
+          <p class="text-xs text-slate-500">Las exenciones fiscales pueden suponer un ahorro de entre 10.000 € y más de 50.000 €.</p>
+        </div>
+
+        <!-- Pregunta 1: ¿Es Vivienda Habitual? -->
+        <div class="space-y-1.5">
+          <label class="block text-xs font-bold text-slate-700 uppercase">1. ¿Qué uso tiene actualmente la vivienda? *</label>
+          <div class="grid grid-cols-2 gap-3 text-xs">
+            <label class="border-2 border-slate-200 rounded-xl p-3 cursor-pointer hover:border-emerald-500 has-[:checked]:border-emerald-600 has-[:checked]:bg-emerald-50 font-semibold flex items-center gap-2">
+              <input type="radio" name="housing_use" value="habitual" class="text-emerald-600" checked>
+              <span>Vivienda Habitual (resides en ella)</span>
+            </label>
+            <label class="border-2 border-slate-200 rounded-xl p-3 cursor-pointer hover:border-emerald-500 has-[:checked]:border-emerald-600 has-[:checked]:bg-emerald-50 font-semibold flex items-center gap-2">
+              <input type="radio" name="housing_use" value="segunda" class="text-emerald-600">
+              <span>Segunda Residencia / Alquiler</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Pregunta 2: ¿Mayor de 65 años? (CRÍTICO) -->
+        <div class="bg-amber-50/70 border border-amber-200 rounded-xl p-4 space-y-2">
+          <div class="flex items-center gap-2">
+            <i data-lucide="award" class="w-5 h-5 text-amber-600 shrink-0"></i>
+            <span class="text-xs font-bold uppercase text-amber-900">Exención por Edad (Ley IRPF Art. 33.4.b)</span>
+          </div>
+          <label class="block text-xs font-bold text-slate-800">¿El titular (o alguno de los cónyuges titulares) tiene 65 años o más? *</label>
+          <div class="grid grid-cols-2 gap-3 text-xs">
+            <label class="bg-white border-2 border-slate-200 rounded-lg p-2.5 cursor-pointer hover:border-emerald-500 has-[:checked]:border-emerald-600 has-[:checked]:bg-emerald-50 font-semibold text-center">
+              <input type="radio" name="is_over_65" value="si" class="hidden">
+              🎉 Sí, tiene 65 años o más
+            </label>
+            <label class="bg-white border-2 border-slate-200 rounded-lg p-2.5 cursor-pointer hover:border-emerald-500 has-[:checked]:border-emerald-600 has-[:checked]:bg-emerald-50 font-semibold text-center">
+              <input type="radio" name="is_over_65" value="no" class="hidden" checked>
+              No, menor de 65 años
+            </label>
+          </div>
+          <p class="text-[11px] text-amber-800">
+            * Si eres mayor de 65 años y vendes tu vivienda habitual, <strong>NO pagas ni un solo euro de IRPF</strong> por la ganancia obtenida.
+          </p>
+        </div>
+
+        <!-- Pregunta 3: Residente o No Residente Fiscal -->
+        <div class="space-y-1.5">
+          <label class="block text-xs font-bold text-slate-700 uppercase">3. Residencia Fiscal del Vendedor *</label>
+          <div class="grid grid-cols-2 gap-3 text-xs">
+            <label class="border-2 border-slate-200 rounded-xl p-3 cursor-pointer hover:border-emerald-500 has-[:checked]:border-emerald-600 has-[:checked]:bg-emerald-50 font-semibold">
+              <input type="radio" name="tax_residency" value="residente" class="text-emerald-600" checked>
+              <span class="block text-slate-800 font-bold">Residente en España</span>
+              <span class="block text-[11px] text-slate-500 font-normal">Tributa en IRPF habitual</span>
+            </label>
+            <label class="border-2 border-slate-200 rounded-xl p-3 cursor-pointer hover:border-emerald-500 has-[:checked]:border-emerald-600 has-[:checked]:bg-emerald-50 font-semibold">
+              <input type="radio" name="tax_residency" value="no_residente" class="text-emerald-600">
+              <span class="block text-slate-800 font-bold">No Residente Fiscal</span>
+              <span class="block text-[11px] text-slate-500 font-normal">Retención 3% Notaría (Mod. 211)</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="flex justify-between pt-3">
+          <button type="button" onclick="nextStep(1)" class="px-5 py-2.5 text-slate-600 hover:text-slate-900 font-medium text-sm flex items-center gap-1">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i> Anterior
+          </button>
+          <button type="button" onclick="nextStep(3)" class="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl shadow-md flex items-center gap-2 transition">
+            Siguiente: Hipoteca y Gastos <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </section>
+
+      <!-- PASO 3: Hipoteca, Honorarios de Agencia y Gastos -->
+      <section id="step-3" class="step-transition space-y-4 hidden">
+        <div>
+          <h2 class="text-lg sm:text-xl font-bold text-slate-800 flex items-center gap-2">
+            <i data-lucide="receipt" class="w-5 h-5 text-emerald-600"></i> Cargas Hipotecarias y Gastos de Venta
+          </h2>
+          <p class="text-xs text-slate-500">Descontaremos los importes que se liquidan directamente el día de la firma en notaría.</p>
+        </div>
+
+        <!-- Hipoteca Pendiente -->
+        <div class="border rounded-xl p-4 space-y-3 bg-slate-50/50">
+          <label class="block text-xs font-bold text-slate-700 uppercase">¿Tienes hipoteca pendiente sobre este inmueble?</label>
+          <div class="grid grid-cols-2 gap-3 text-xs">
+            <label class="bg-white border rounded-lg p-2.5 cursor-pointer has-[:checked]:border-emerald-600 has-[:checked]:bg-emerald-50 font-semibold text-center">
+              <input type="radio" name="has_mortgage" value="no" class="hidden" checked onchange="toggleMortgageInput(false)">
+              No, libre de cargas
+            </label>
+            <label class="bg-white border rounded-lg p-2.5 cursor-pointer has-[:checked]:border-emerald-600 has-[:checked]:bg-emerald-50 font-semibold text-center">
+              <input type="radio" name="has_mortgage" value="si" class="hidden" onchange="toggleMortgageInput(true)">
+              Sí, tengo hipoteca activa
+            </label>
+          </div>
+
+          <div id="mortgage-amount-container" class="hidden pt-2">
+            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Saldo pendiente aproximado de hipoteca (€)</label>
+            <div class="relative">
+              <input type="number" id="mortgage_balance" name="mortgage_balance" min="0" step="500" value="45000" class="w-full pl-4 pr-10 py-2 rounded-lg border border-slate-300 font-semibold text-sm">
+              <span class="absolute right-3.5 top-2.5 text-slate-400 font-bold text-xs">€</span>
+            </div>
+            <span class="text-[11px] text-slate-400">* Añadiremos ~950 € de aranceles de cancelación registral y gestoría bancaria.</span>
+          </div>
+        </div>
+
+        <!-- Honorarios Agencia -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Honorarios de Intermediación (%)</label>
+            <select name="agency_fee_percent" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 text-sm">
+              <option value="0">0% (Venta particular sin agencia)</option>
+              <option value="3">3% + IVA</option>
+              <option value="4">4% + IVA</option>
+              <option value="5" selected>5% + IVA (Estándar profesional)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Certificados y Notas Registrales</label>
+            <input type="text" disabled value="~250 € (CEE + Cédula + Nota Simple)" class="w-full px-4 py-2.5 rounded-lg border border-slate-200 bg-slate-100 text-slate-500 text-xs font-medium">
+          </div>
+        </div>
+
+        <!-- Plazo de venta (Cualificación del Lead) -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 uppercase mb-1">¿En qué plazo te gustaría cerrar la venta? *</label>
+          <select name="sale_urgency" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 text-sm font-semibold">
+            <option value="urgente">Lo antes posible (1 a 2 meses) - ¡Tengo prisa!</option>
+            <option value="medio" selected>En los próximos 3 a 6 meses</option>
+            <option value="largo">Más de 6 meses / Solo calculando opciones</option>
+          </select>
+        </div>
+
+        <div class="flex justify-between pt-3">
+          <button type="button" onclick="nextStep(2)" class="px-5 py-2.5 text-slate-600 hover:text-slate-900 font-medium text-sm flex items-center gap-1">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i> Anterior
+          </button>
+          <button type="button" onclick="nextStep(4)" class="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl shadow-md flex items-center gap-2 transition">
+            Ver Mi Líquido en Bolsillo <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </section>
+
+      <!-- PASO 4: Datos de Contacto para el Informe Notarial -->
+      <section id="step-4" class="step-transition space-y-4 hidden">
+        <div class="text-center">
+          <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-2">
+            <i data-lucide="file-check-2" class="w-6 h-6"></i>
+          </div>
+          <h2 class="text-xl sm:text-2xl font-bold text-slate-800">
+            ¡Tu Liquidación Neta está calculada!
+          </h2>
+          <p class="text-xs sm:text-sm text-slate-500 max-w-md mx-auto mt-1">
+            Introduce dónde enviarte el desglose oficial con la simulación de IRPF, modelo 210/211 y certificado de ahorro.
+          </p>
+        </div>
+
+        <div class="space-y-3 pt-2">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Nombre y Apellidos *</label>
+            <input type="text" id="lead_name" name="lead_name" required placeholder="Ej. Fernando Ramos" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 text-sm">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">WhatsApp / Teléfono Móvil *</label>
+            <input type="tel" id="lead_phone" name="lead_phone" required placeholder="Ej. +34 612 345 678" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 text-sm">
+            <span class="text-[11px] text-slate-400">Recibirás un enlace directo para consultar tu simulación en cualquier momento.</span>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Correo Electrónico *</label>
+            <input type="email" id="lead_email" name="lead_email" required placeholder="fernando@ejemplo.com" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 text-sm">
+          </div>
+        </div>
+
+        <!-- RGPD -->
+        <div class="pt-1">
+          <label class="flex items-start text-xs text-slate-500 gap-2 cursor-pointer">
+            <input type="checkbox" id="rgpd_consent" required class="mt-0.5 rounded text-emerald-600 focus:ring-emerald-500">
+            <span>Acepto la política de privacidad y autorizo el cálculo y recepción de la simulación fiscal inmobiliaria.</span>
+          </label>
+        </div>
+
+        <div class="flex justify-between pt-3">
+          <button type="button" onclick="nextStep(3)" class="px-5 py-2.5 text-slate-600 hover:text-slate-900 font-medium text-sm flex items-center gap-1">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i> Volver
+          </button>
+          <button type="submit" id="submit-btn" class="px-7 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-lg shadow-emerald-600/30 flex items-center gap-2 transition transform active:scale-95">
+            <i data-lucide="check-circle-2" class="w-5 h-5"></i> Descubrir Mi Saldo Limpio
+          </button>
+        </div>
+      </section>
+
+    </form>
+
+    <!-- PANTALLA DE RESULTADOS / LIQUIDACIÓN NOTARIAL Y FISCAL -->
+    <div id="results-screen" class="hidden bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-8">
+      
+      <div id="calculating-state" class="py-12 space-y-4 text-center">
+        <div class="animate-spin w-12 h-12 border-4 border-emerald-600 border-t-transparent rounded-full mx-auto"></div>
+        <h3 class="text-lg font-bold text-slate-800">Liquidando impuestos, cargas y plusvalía...</h3>
+        <p class="text-xs text-slate-500">Aplicando tramos IRPF 2026 y exenciones por edad y residencia fiscal.</p>
+      </div>
+
+      <div id="results-content" class="hidden space-y-6">
+
+        <!-- Banner Exención +65 años (Condicional) -->
+        <div id="senior-exemption-alert" class="hidden bg-emerald-100/80 border-2 border-emerald-500 rounded-xl p-4 text-emerald-900 flex items-start gap-3 shadow-sm">
+          <div class="p-2 bg-emerald-600 text-white rounded-lg shrink-0">
+            <i data-lucide="sparkles" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h4 class="font-extrabold text-sm sm:text-base">¡Exención del 100% de IRPF Aplicada!</h4>
+            <p class="text-xs text-emerald-800 mt-0.5">
+              Al ser <strong>mayor de 65 años</strong> y vender tu <strong>vivienda habitual</strong>, la ley te exime de tributar por la ganancia patrimonial. Te estás ahorrando <span id="senior-savings-amount" class="font-bold underline">0 €</span> en impuestos que se quedan íntegramente en tu bolsillo.
+            </p>
+          </div>
+        </div>
+
+        <!-- Banner No Residente (Condicional) -->
+        <div id="non-resident-alert" class="hidden bg-blue-50 border border-blue-300 rounded-xl p-4 text-blue-900 flex items-start gap-3">
+          <div class="p-2 bg-blue-600 text-white rounded-lg shrink-0">
+            <i data-lucide="globe" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h4 class="font-bold text-sm">Régimen Fiscal de No Residente (Modelo 211)</h4>
+            <p class="text-xs text-blue-800 mt-0.5">
+              El comprador retendrá obligatoriamente un <strong>3% del precio de venta (<span id="retention-3-amount">0 €</span>)</strong> en el acto de la firma notarial para ingresarlo en Hacienda en tu nombre.
+            </p>
+          </div>
+        </div>
+
+        <!-- Tarjeta Principal: Saldo Neto Limpio -->
+        <div class="bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-950 text-white rounded-2xl p-6 sm:p-8 text-center shadow-xl relative overflow-hidden">
+          <span class="text-xs font-bold text-emerald-400 uppercase tracking-widest bg-emerald-950/80 px-3 py-1 rounded-full border border-emerald-800/50">
+            Saldo Líquido Estimado en tu Cuenta
+          </span>
+          <div class="text-4xl sm:text-5xl font-black my-3 text-white tracking-tight" id="res-net-proceeds">
+            0 €
+          </div>
+          <p class="text-xs text-slate-300 max-w-md mx-auto">
+            Dinero real tras deducir hipoteca, impuestos, gastos de cancelación y comisiones sobre una venta de <span id="res-gross-sale" class="font-bold text-emerald-300">0 €</span>.
+          </p>
+        </div>
+
+        <!-- Tabla Desglose Detallado de Gastos e Impuestos -->
+        <div>
+          <h4 class="font-bold text-slate-800 text-sm uppercase tracking-wider mb-3 flex items-center gap-2">
+            <i data-lucide="receipt-text" class="w-4 h-4 text-emerald-600"></i> Balance Detallado de Notaría y Fiscalidad
+          </h4>
+
+          <div class="border rounded-xl divide-y text-xs sm:text-sm bg-slate-50/50 overflow-hidden">
+            
+            <div class="flex justify-between items-center p-3 font-semibold bg-emerald-50/50 text-emerald-950">
+              <span>(+) Precio Bruto de Venta</span>
+              <span id="detail-gross" class="font-bold">0 €</span>
+            </div>
+
+            <div class="flex justify-between items-center p-3 text-slate-700">
+              <span class="flex items-center gap-1.5">
+                (-) Cancelación de Hipoteca <span id="tag-mortgage" class="text-[10px] text-slate-400">(capital + gestoría/aranceles)</span>
+              </span>
+              <span id="detail-mortgage" class="font-semibold text-rose-600">0 €</span>
+            </div>
+
+            <div class="flex justify-between items-center p-3 text-slate-700">
+              <span class="flex items-center gap-1.5">
+                (-) IRPF / Ganancia Patrimonial <span id="tag-irpf-state" class="text-[10px] font-bold text-emerald-600"></span>
+              </span>
+              <span id="detail-irpf" class="font-semibold text-rose-600">0 €</span>
+            </div>
+
+            <div class="flex justify-between items-center p-3 text-slate-700">
+              <span>(-) Plusvalía Municipal Estimada (IIVTNU)</span>
+              <span id="detail-plusvalia" class="font-semibold text-rose-600">0 €</span>
+            </div>
+
+            <div class="flex justify-between items-center p-3 text-slate-700">
+              <span>(-) Honorarios de Intermediación Inmobiliaria (con IVA)</span>
+              <span id="detail-agency" class="font-semibold text-rose-600">0 €</span>
+            </div>
+
+            <div class="flex justify-between items-center p-3 text-slate-700">
+              <span>(-) Gastos de Gestión (Certificado Energético, Cédula y Nota Simple)</span>
+              <span id="detail-docs" class="font-semibold text-rose-600">250 €</span>
+            </div>
+
+            <div class="flex justify-between items-center p-3.5 bg-slate-900 text-white font-extrabold text-sm sm:text-base">
+              <span>(=) TOTAL NETO LIMPIO A COBRAR</span>
+              <span id="detail-total-net" class="text-emerald-400 font-black">0 €</span>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Call to Action Estratégico según Cualificación -->
+        <div id="action-box" class="rounded-xl p-5 space-y-3">
+          <!-- Inyectado por JS -->
+        </div>
+
+        <div class="text-center pt-2">
+          <button onclick="resetFunnel()" class="text-xs text-slate-400 hover:text-slate-600 underline">Recalcular con otros datos</button>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Panel de Configuración de Webhook CRM -->
+    <div class="mt-8 pt-4 border-t border-slate-200 text-center">
+      <button onclick="toggleConfigModal()" class="text-xs text-slate-500 hover:text-emerald-600 inline-flex items-center gap-1 font-medium">
+        <i data-lucide="settings" class="w-3.5 h-3.5"></i> Configuración de Webhook y Teléfono de Asesor
+      </button>
+    </div>
+
+  </main>
+
+  <!-- Modal Configuración -->
+  <div id="config-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl">
+      <div class="flex justify-between items-center border-b pb-3">
+        <h4 class="font-bold text-slate-800 text-base flex items-center gap-2">
+          <i data-lucide="webhook" class="w-5 h-5 text-emerald-600"></i> Ajustes de Automatización
+        </h4>
+        <button onclick="toggleConfigModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Webhook URL (Make.com / Zapier / CRM)</label>
+        <input type="url" id="webhook-url-input" placeholder="https://hook.eu1.make.com/..." class="w-full px-3 py-2 border rounded-lg text-xs font-mono text-slate-800">
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Teléfono WhatsApp del Asesor Inmobiliario</label>
+        <input type="tel" id="agent-phone-input" placeholder="+34600000000" class="w-full px-3 py-2 border rounded-lg text-xs font-mono text-slate-800">
+      </div>
+      <div class="flex justify-end gap-2 pt-2">
+        <button onclick="saveConfig()" class="px-4 py-2 bg-emerald-600 text-white rounded-lg text-xs font-bold hover:bg-emerald-700">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-400">
+    <p>© 2026 Simulador Fiscal Inmobiliario. Cumplimiento Ley IRPF y Plusvalía Municipal.</p>
+  </footer>
+
+  <script src="app.js"></script>
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>
