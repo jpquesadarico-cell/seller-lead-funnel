@@ -1,20 +1,20 @@
 {
-  "name": "Embudo Captacion Vendedores Inmobiliarios - Fiscal & Notarial",
+  "name": "Quesada Inmobiliaria - Embudo Captacion Vendedores Fiscal & Notarial",
   "nodes": [
     {
       "parameters": {
         "httpMethod": "POST",
-        "path": "lead-vendedor-inmobiliario",
+        "path": "lead-vendedor-quesada",
         "options": {}
       },
-      "name": "Webhook Entrada Embudo",
+      "name": "Webhook Entrada Quesada",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 1,
       "position": [
         240,
         300
       ],
-      "webhookId": "lead-vendedor-inmobiliario"
+      "webhookId": "lead-vendedor-quesada"
     },
     {
       "parameters": {
@@ -98,12 +98,12 @@
     {
       "parameters": {
         "chatId": "TU_TELEGRAM_CHAT_ID_O_CANAL",
-        "text": "=🔥 *¡NUEVA CAPTACIÓN PRIORITARIA DE PROPIETARIO!* 🔥\n\n👤 *Propietario:* {{ $json.body.lead.name }}\n📱 *Teléfono:* [{{ $json.body.lead.phone }}](https://wa.me/{{ $json.body.lead.phone.replace(/[^0-9]/g, '') }})\n📧 *Email:* {{ $json.body.lead.email }}\n\n📍 *Ubicación:* {{ $json.body.property_financials.city }}\n💶 *Precio de Venta Deseado:* {{ $json.body.financial_breakdown.sale_price.toLocaleString('es-ES') }} €\n💰 *LÍQUIDO NETO CALCULADO:* {{ $json.body.financial_breakdown.net_proceeds.toLocaleString('es-ES') }} €\n\n{{ $json.body.financial_breakdown.is_senior_exempt ? '🎉 *EXENCIÓN +65 AÑOS:* ¡Ahorro de ' + $json.body.financial_breakdown.senior_savings.toLocaleString('es-ES') + ' € en IRPF!' : '⚖️ *IRPF Estimado:* ' + $json.body.financial_breakdown.irpf_tax_amount.toLocaleString('es-ES') + ' €' }}\n🏦 *Carga Hipotecaria a Cancelar:* {{ $json.body.financial_breakdown.total_mortgage_outflow.toLocaleString('es-ES') }} €\n🏛️ *Plusvalía Municipal:* {{ $json.body.financial_breakdown.plusvalia_municipal.toLocaleString('es-ES') }} €\n\n🏷️ *Cualificación:* {{ $json.body.lead_scoring.label }}\n⏱ *Plazo de Venta:* {{ $json.body.mortgage_and_costs.sale_urgency }}\n\n👉 [Contactar por WhatsApp ahora](https://wa.me/{{ $json.body.lead.phone.replace(/[^0-9]/g, '') }}?text=Hola%20{{ encodeURIComponent($json.body.lead.name) }},%20hemos%20revisado%20tu%20simulación%20fiscal%20para%20{{ encodeURIComponent($json.body.property_financials.city) }})",
+        "text": "=🏢 *QUESADA INMOBILIARIA - NUEVO PROPIETARIO 🔥*\n\n👤 *Propietario:* {{ $json.body.lead.name }}\n📱 *Teléfono:* [{{ $json.body.lead.phone }}](https://wa.me/{{ $json.body.lead.phone.replace(/[^0-9]/g, '') }})\n📧 *Email:* {{ $json.body.lead.email }}\n\n📍 *Ubicación:* {{ $json.body.property_financials.city }}\n💶 *Precio Venta:* {{ $json.body.financial_breakdown.sale_price.toLocaleString('es-ES') }} €\n💰 *LÍQUIDO NETO CALCULADO:* {{ $json.body.financial_breakdown.net_proceeds.toLocaleString('es-ES') }} €\n\n{{ $json.body.financial_breakdown.is_senior_exempt ? '🎉 *EXENCIÓN +65 AÑOS:* ¡Ahorro de ' + $json.body.financial_breakdown.senior_savings.toLocaleString('es-ES') + ' € en IRPF!' : '⚖️ *IRPF Estimado:* ' + $json.body.financial_breakdown.irpf_tax_amount.toLocaleString('es-ES') + ' €' }}\n🏦 *Carga Hipotecaria a Cancelar:* {{ $json.body.financial_breakdown.total_mortgage_outflow.toLocaleString('es-ES') }} €\n🏛️ *Plusvalía Municipal:* {{ $json.body.financial_breakdown.plusvalia_municipal.toLocaleString('es-ES') }} €\n\n🏷️ *Cualificación:* {{ $json.body.lead_scoring.label }}\n⏱ *Plazo de Venta:* {{ $json.body.mortgage_and_costs.sale_urgency }}\n\n👉 [Contactar por WhatsApp ahora](https://wa.me/{{ $json.body.lead.phone.replace(/[^0-9]/g, '') }}?text=Hola%20{{ encodeURIComponent($json.body.lead.name) }},%20soy%20Juan%20Pedro%20de%20Quesada%20Inmobiliaria.%20He%20revisado%20tu%20simulaci%C3%B3n%20para%20{{ encodeURIComponent($json.body.property_financials.city) }})",
         "additionalFields": {
           "parse_mode": "Markdown"
         }
       },
-      "name": "Alerta Telegram Equipo Comercial",
+      "name": "Alerta Telegram Juan Pedro Quesada",
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1,
       "position": [
@@ -114,12 +114,12 @@
     {
       "parameters": {
         "chatId": "TU_TELEGRAM_CHAT_ID_O_CANAL",
-        "text": "=ℹ️ *Nuevo Lead Informativo (Templado/Curioso)*\n\n👤 *Nombre:* {{ $json.body.lead.name }}\n📱 *Teléfono:* {{ $json.body.lead.phone }}\n📍 *Ciudad:* {{ $json.body.property_financials.city }}\n💶 *Venta:* {{ $json.body.financial_breakdown.sale_price.toLocaleString('es-ES') }} €\n💰 *Neto:* {{ $json.body.financial_breakdown.net_proceeds.toLocaleString('es-ES') }} €\n🏷️ *Nivel:* {{ $json.body.lead_scoring.label }}",
+        "text": "=ℹ️ *Quesada Inmobiliaria - Lead Secundario*\n\n👤 *Nombre:* {{ $json.body.lead.name }}\n📱 *Teléfono:* {{ $json.body.lead.phone }}\n📍 *Municipio:* {{ $json.body.property_financials.city }}\n💶 *Venta:* {{ $json.body.financial_breakdown.sale_price.toLocaleString('es-ES') }} €\n💰 *Neto:* {{ $json.body.financial_breakdown.net_proceeds.toLocaleString('es-ES') }} €\n🏷️ *Nivel:* {{ $json.body.lead_scoring.label }}",
         "additionalFields": {
           "parse_mode": "Markdown"
         }
       },
-      "name": "Alerta Telegram Lead Secundario",
+      "name": "Alerta Telegram Lead Informativo",
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1,
       "position": [
@@ -129,7 +129,7 @@
     }
   ],
   "connections": {
-    "Webhook Entrada Embudo": {
+    "Webhook Entrada Quesada": {
       "main": [
         [
           {
@@ -151,7 +151,7 @@
         ],
         [
           {
-            "node": "Alerta Telegram Lead Secundario",
+            "node": "Alerta Telegram Lead Informativo",
             "type": "main",
             "index": 0
           }
@@ -162,7 +162,7 @@
       "main": [
         [
           {
-            "node": "Alerta Telegram Equipo Comercial",
+            "node": "Alerta Telegram Juan Pedro Quesada",
             "type": "main",
             "index": 0
           }

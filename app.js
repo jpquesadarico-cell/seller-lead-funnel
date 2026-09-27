@@ -1,13 +1,13 @@
 /**
- * Motor Fiscal Inmobiliario y Calculadora de Beneficio Neto Limpio
- * Cumplimiento Ley IRPF España (Tramos del Ahorro), Exención +65 años y Régimen No Residentes.
+ * Motor Fiscal Inmobiliario - Quesada Inmobiliaria (Santa Pola & Costa Blanca)
+ * Asesoría Notarial, Cumplimiento Ley IRPF y Simulación de Saldo Líquido.
  */
 
 const AppState = {
   currentStep: 1,
   totalSteps: 4,
-  webhookUrl: localStorage.getItem('neto_webhook_url') || '',
-  agentPhone: localStorage.getItem('neto_agent_phone') || '+34600000000',
+  webhookUrl: localStorage.getItem('quesada_webhook_url') || '',
+  agentPhone: localStorage.getItem('quesada_agent_phone') || '+34689894231',
   calcResult: null
 };
 
@@ -78,7 +78,7 @@ function initFormHandler() {
 
     const submitBtn = document.getElementById('submit-btn');
     submitBtn.disabled = true;
-    submitBtn.innerHTML = `<span class="animate-spin inline-block mr-2">⏳</span> Calculando Balance Notarial...`;
+    submitBtn.innerHTML = `<span class="animate-spin inline-block mr-2">⏳</span> Auditando con Quesada Inmobiliaria...`;
 
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
@@ -90,6 +90,8 @@ function initFormHandler() {
     const scoring = calculateSellerLeadScoring(data, financialReport);
 
     const payload = {
+      agency: "Quesada Inmobiliaria",
+      source: "Calculadora Fiscal Santa Pola / Costa Blanca",
       timestamp: new Date().toISOString(),
       lead: {
         name: data.lead_name,
@@ -99,7 +101,7 @@ function initFormHandler() {
       property_financials: {
         sale_price: Number(data.sale_price),
         purchase_price: Number(data.purchase_price),
-        city: data.property_city,
+        city: data.property_city || "Santa Pola",
         years_held: Number(data.years_held)
       },
       fiscal_profile: {
@@ -119,7 +121,7 @@ function initFormHandler() {
 
     AppState.calcResult = payload;
 
-    // Enviar a Webhook si existe
+    // Enviar a Webhook si existe (n8n / CRM)
     if (AppState.webhookUrl) {
       try {
         await fetch(AppState.webhookUrl, {
@@ -137,7 +139,7 @@ function initFormHandler() {
 }
 
 /**
- * Motor de Cálculo Notarial y Fiscal Completo (España 2026)
+ * Motor de Cálculo Notarial y Fiscal (Comunidad Valenciana / España 2026)
  */
 function calculateNetProceeds(data) {
   const salePrice = Number(data.sale_price);
@@ -147,17 +149,16 @@ function calculateNetProceeds(data) {
   const isHabitual = data.housing_use === 'habitual';
   const isNonResident = data.tax_residency === 'no_residente';
 
-  // 1. Honorarios de Intermediación Inmobiliaria
+  // 1. Honorarios Quesada Inmobiliaria
   const agencyPercent = Number(data.agency_fee_percent) || 0;
   const agencyFeeNet = salePrice * (agencyPercent / 100);
   const agencyFeeIVA = agencyFeeNet * 0.21;
   const totalAgencyFee = agencyFeeNet + agencyFeeIVA;
 
-  // 2. Gastos de Documentación (CEE, Cédula de habitabilidad, Nota Simple informativa)
+  // 2. Gastos de Documentación (CEE, Cédula de 2ª ocupación y Nota Simple oficial)
   const docCosts = 250;
 
-  // 3. Plusvalía Municipal (IIVTNU) Estimada
-  // Según RD-Ley 26/2021 sobre incremento de valor del suelo.
+  // 3. Plusvalía Municipal (IIVTNU)
   let plusvaliaRate = 0.015;
   if (yearsHeld > 10) plusvaliaRate = 0.022;
   const estimatedPlusvalia = Math.round(salePrice * plusvaliaRate);
@@ -167,17 +168,14 @@ function calculateNetProceeds(data) {
   let mortgageCancellationCosts = 0;
   if (data.has_mortgage === 'si') {
     mortgageDebt = Number(data.mortgage_balance) || 0;
-    // Aranceles de notario, registro y comisión gestoría bancaria para carta de pago
+    // Aranceles notariales, registrales y gestoría bancaria para cancelación registral
     mortgageCancellationCosts = mortgageDebt > 0 ? 950 : 0;
   }
   const totalMortgageOutflow = mortgageDebt + mortgageCancellationCosts;
 
   // 5. Cálculo de Ganancia Patrimonial
-  // Valor Transmisión Neto = Precio Venta - Honorarios Agencia - Plusvalía Municipal - Docs
   const netTransmissionValue = salePrice - totalAgencyFee - estimatedPlusvalia - docCosts;
-
-  // Valor Adquisición Neto = Precio Compra + Gastos de Adquisición históricos (aprox 10% ITP/Notaría)
-  const pastAcquisitionExpenses = purchasePrice * 0.10;
+  const pastAcquisitionExpenses = purchasePrice * 0.10; // ITP 10% Comunidad Valenciana + notaría original
   const netAcquisitionValue = purchasePrice + pastAcquisitionExpenses;
 
   const rawCapitalGain = Math.max(0, netTransmissionValue - netAcquisitionValue);
@@ -188,15 +186,14 @@ function calculateNetProceeds(data) {
   let isSeniorExempt = false;
   let nonResidentRetention3 = 0;
 
-  // Calcular cuota teórica en IRPF
   if (rawCapitalGain > 0) {
     potentialTaxAmount = calculateSpanishCapitalGainsTax(rawCapitalGain);
   }
 
   if (isNonResident) {
-    // Régimen No Residentes
-    nonResidentRetention3 = Math.round(salePrice * 0.03); // Retención obligatoria 3% Modelo 211
-    finalTaxAmount = Math.round(rawCapitalGain * 0.19); // 19% estándar UE en Modelo 210
+    // Régimen de No Residentes (Costa Blanca - Compradores y Vendedores Internacionales)
+    nonResidentRetention3 = Math.round(salePrice * 0.03); // Retención obligatoria 3% Modelo 211 en notaría
+    finalTaxAmount = Math.round(rawCapitalGain * 0.19); // Modelo 210
   } else {
     // Régimen Residente
     if (isOver65 && isHabitual) {
@@ -208,7 +205,7 @@ function calculateNetProceeds(data) {
     }
   }
 
-  // 7. Saldo Líquido Final en el Bolsillo
+  // 7. Saldo Líquido Final
   const totalDeductions = totalMortgageOutflow + finalTaxAmount + estimatedPlusvalia + totalAgencyFee + docCosts;
   const netProceeds = salePrice - totalDeductions;
 
@@ -234,7 +231,7 @@ function calculateNetProceeds(data) {
 }
 
 /**
- * Tramos del IRPF Ahorro España 2026:
+ * Escala Progresiva del Ahorro IRPF España 2026:
  * - Hasta 6.000 €: 19%
  * - De 6.000 a 50.000 €: 21%
  * - De 50.000 a 200.000 €: 23%
@@ -243,7 +240,6 @@ function calculateNetProceeds(data) {
  */
 function calculateSpanishCapitalGainsTax(gain) {
   let tax = 0;
-
   if (gain <= 6000) {
     tax = gain * 0.19;
   } else if (gain <= 50000) {
@@ -255,18 +251,16 @@ function calculateSpanishCapitalGainsTax(gain) {
   } else {
     tax = 6000 * 0.19 + 44000 * 0.21 + 150000 * 0.23 + 100000 * 0.27 + (gain - 300000) * 0.28;
   }
-
   return tax;
 }
 
 /**
- * Lead Scoring Especializado en Vendedores de Alta Cualificación
+ * Lead Scoring Especializado Quesada Inmobiliaria
  */
 function calculateSellerLeadScoring(data, report) {
   let score = 0;
   let tags = [];
 
-  // Urgencia
   if (data.sale_urgency === 'urgente') {
     score += 40;
     tags.push("Urgencia Inmediata (<2 meses)");
@@ -277,39 +271,33 @@ function calculateSellerLeadScoring(data, report) {
     score += 10;
   }
 
-  // Beneficio por Exención +65 (Lead Diamante: agradecimiento y fidelidad extrema)
-  if (report.is_senior_exempt && report.senior_savings > 5000) {
+  if (report.is_senior_exempt && report.senior_savings > 3000) {
     score += 35;
-    tags.push(`Ahorro Fiscal Senior (+${formatCurrency(report.senior_savings)})`);
+    tags.push(`Exención Fiscal Senior (+${formatCurrency(report.senior_savings)})`);
   }
 
-  // Hipoteca activa a liquidar (cliente con motivación de desapalancamiento)
   if (data.has_mortgage === 'si') {
     score += 15;
     tags.push("Cancelación Hipotecaria");
   }
 
-  // Perfil No Residente
   if (data.tax_residency === 'no_residente') {
-    score += 20;
-    tags.push("Vendedor No Residente (Requiere Asesoría Notarial)");
+    score += 25;
+    tags.push("Vendedor No Residente (Gestión Retención 3% Notaría)");
   }
 
   let category = 'B';
   let label = 'Lead Templado (Cualificado)';
-  let color = 'bg-amber-100 text-amber-900 border-amber-300';
 
   if (score >= 65) {
     category = 'A';
     label = 'Lead Prioridad Alta 🔥 (Cierre Inminente)';
-    color = 'bg-emerald-100 text-emerald-900 border-emerald-400';
   } else if (score < 40) {
     category = 'C';
     label = 'Lead Informativo / Curioso';
-    color = 'bg-slate-100 text-slate-800 border-slate-300';
   }
 
-  return { score, category, label, color, tags };
+  return { score, category, label, tags };
 }
 
 function showFinancialResults(payload) {
@@ -325,7 +313,6 @@ function showFinancialResults(payload) {
     document.getElementById('results-content').classList.remove('hidden');
 
     const rep = payload.financial_breakdown;
-    const lead = payload.lead;
 
     // Alertas Condicionales
     if (rep.is_senior_exempt) {
@@ -356,11 +343,9 @@ function showFinancialResults(payload) {
     document.getElementById('detail-agency').textContent = rep.agency_fee_total > 0 ? `- ${formatCurrency(rep.agency_fee_total)}` : '0 €';
     document.getElementById('detail-total-net').textContent = formatCurrency(rep.net_proceeds);
 
-    // Renderizar Call To Action personalizado para WhatsApp
     renderCustomAction(payload);
-
     if (window.lucide) lucide.createIcons();
-  }, 1300);
+  }, 1200);
 }
 
 function renderCustomAction(payload) {
@@ -372,33 +357,34 @@ function renderCustomAction(payload) {
   const netFormatted = formatCurrency(rep.net_proceeds);
   const grossFormatted = formatCurrency(rep.sale_price);
 
-  let waText = `Hola, soy ${lead.name}. He realizado la simulación para vender mi vivienda en ${city} por ${grossFormatted}. Mi saldo neto resultante es ${netFormatted}. `;
+  let waText = `Hola Juan Pedro, soy ${lead.name}. Acabo de realizar la simulación fiscal en Quesada Inmobiliaria para mi vivienda en ${city} (Venta: ${grossFormatted} | Neto estimado: ${netFormatted}). `;
   if (rep.is_senior_exempt) {
-    waText += `Deseo confirmar la aplicación de la exención fiscal para mayores de 65 años con vuestro equipo notarial.`;
+    waText += `Deseo confirmar la exención del 100% de IRPF para mayores de 65 años con vuestro equipo.`;
   } else if (rep.is_non_resident) {
-    waText += `Deseo coordinar la retención del 3% y el modelo 210 de no residente.`;
+    waText += `Soy no residente y me gustaría coordinar la retención del 3% y el modelo 210.`;
   } else {
-    waText += `Me gustaría revisar estos números con un asesor para preparar la venta.`;
+    waText += `Me gustaría revisar estos números con vosotros para coordinar la venta.`;
   }
 
-  const waUrl = `https://wa.me/${AppState.agentPhone.replace(/\+/g, '')}?text=${encodeURIComponent(waText)}`;
+  const cleanPhone = AppState.agentPhone.replace(/[^0-9]/g, '');
+  const waUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(waText)}`;
 
-  box.className = "bg-emerald-50 border-2 border-emerald-500 rounded-xl p-5 space-y-3";
+  box.className = "bg-quesada-soft border-2 border-quesada rounded-xl p-5 space-y-3";
   box.innerHTML = `
     <div class="flex items-start gap-3">
-      <div class="w-9 h-9 rounded-full bg-emerald-600 text-white flex items-center justify-center shrink-0">
+      <div class="w-9 h-9 rounded-full bg-quesada text-white flex items-center justify-center shrink-0">
         <i data-lucide="check-check" class="w-5 h-5"></i>
       </div>
       <div>
-        <h4 class="font-extrabold text-slate-900 text-sm sm:text-base">¿Quieres auditar esta liquidación con nuestro equipo notarial?</h4>
+        <h4 class="font-extrabold text-slate-900 text-sm sm:text-base">¿Deseas auditar esta liquidación con Juan Pedro Quesada?</h4>
         <p class="text-xs text-slate-600 mt-1">
-          Podemos revisar tus escrituras y recibos de IBI para deducir gastos adicionales (reformas, facturas de compra) y elevar aún más el saldo neto que te llevarás.
+          En <strong>Quesada Inmobiliaria</strong> revisamos tus escrituras, IBI y facturas deducibles (reformas, honorarios) para maximizar el dinero limpio que te llevarás el día de la notaría.
         </p>
       </div>
     </div>
     <div class="pt-2">
-      <a href="${waUrl}" target="_blank" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-center rounded-xl text-xs sm:text-sm shadow-md shadow-emerald-600/20 flex items-center justify-center gap-2 transition">
-        <i data-lucide="message-circle" class="w-4 h-4"></i> Hablar con Asesor Fiscal Inmobiliario por WhatsApp
+      <a href="${waUrl}" target="_blank" class="w-full py-3.5 bg-quesada hover:bg-quesada-dark text-white font-bold text-center rounded-xl text-xs sm:text-sm shadow-md shadow-quesada/20 flex items-center justify-center gap-2 transition">
+        <i data-lucide="message-circle" class="w-4 h-4"></i> Hablar por WhatsApp con Juan Pedro Quesada
       </a>
     </div>
   `;
@@ -423,9 +409,9 @@ function saveConfig() {
   AppState.webhookUrl = url;
   AppState.agentPhone = phone;
 
-  localStorage.setItem('neto_webhook_url', url);
-  localStorage.setItem('neto_agent_phone', phone);
+  localStorage.setItem('quesada_webhook_url', url);
+  localStorage.setItem('quesada_agent_phone', phone);
 
-  alert('Configuración guardada.');
+  alert('Configuración de Quesada Inmobiliaria guardada correctamente.');
   toggleConfigModal();
 }
