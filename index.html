@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Calculadora Fiscal del Vendedor | Quesada Inmobiliaria (Santa Pola & Costa Blanca)</title>
+  <title>Calculadora Fiscal del Vendedor | Quesada Inmobiliaria</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -35,22 +35,33 @@
 </head>
 <body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col justify-between">
 
-  <!-- Header Corporativo Quesada Inmobiliaria -->
+  <!-- Header Corporativo Quesada Inmobiliaria con Selector de Idioma -->
   <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
-    <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
-      <a href="https://www.quesadainmobiliaria.com" target="_blank" class="flex items-center space-x-3 group">
-        <img src="logo-quesada.png" alt="Quesada Inmobiliaria" class="h-9 sm:h-11 object-contain">
-        <div class="border-l border-slate-200 pl-3 hidden sm:block">
-          <span class="block text-xs font-bold text-slate-800 tracking-tight">Simulador Notarial & Fiscal</span>
+    <div class="max-w-5xl mx-auto px-4 py-2.5 sm:py-3 flex items-center justify-between">
+      <a href="https://www.quesadainmobiliaria.com" target="_blank" class="flex items-center space-x-2 sm:space-x-3 group">
+        <img src="logo-quesada.png" alt="Quesada Inmobiliaria" class="h-8 sm:h-11 object-contain">
+        <div class="border-l border-slate-200 pl-2 sm:pl-3 hidden md:block">
+          <span class="block text-xs font-bold text-slate-800 tracking-tight" data-i18n="header_subtitle">Simulador Notarial & Fiscal</span>
           <span class="block text-[11px] text-slate-400">Santa Pola • Gran Alacant • Costa Blanca</span>
         </div>
       </a>
-      <div class="flex items-center space-x-3 text-xs sm:text-sm">
-        <a href="tel:+34689894231" class="hidden md:flex items-center text-slate-600 font-semibold hover:text-quesada">
+      
+      <div class="flex items-center space-x-2 sm:space-x-3 text-xs">
+        <!-- Selector de Idioma (ES / EN) -->
+        <div class="flex items-center bg-slate-100 p-0.5 sm:p-1 rounded-lg border border-slate-200 font-bold text-xs">
+          <button type="button" onclick="setLanguage('es')" id="lang-btn-es" class="px-2 sm:px-2.5 py-1 rounded-md transition-all bg-white text-quesada shadow-sm flex items-center gap-1">
+            <span>🇪🇸</span> <span class="hidden sm:inline">ES</span>
+          </button>
+          <button type="button" onclick="setLanguage('en')" id="lang-btn-en" class="px-2 sm:px-2.5 py-1 rounded-md transition-all text-slate-500 hover:text-slate-800 flex items-center gap-1">
+            <span>🇬🇧</span> <span class="hidden sm:inline">EN</span>
+          </button>
+        </div>
+
+        <a href="tel:+34689894231" class="hidden lg:flex items-center text-slate-600 font-semibold hover:text-quesada">
           <i data-lucide="phone" class="w-4 h-4 mr-1 text-quesada"></i> 689 894 231
         </a>
-        <span class="flex items-center text-quesada font-bold bg-quesada-soft px-3 py-1.5 rounded-full border border-quesada/20">
-          <i data-lucide="shield-check" class="w-4 h-4 mr-1 text-quesada"></i> Asesoría Notarial Gratuita
+        <span class="hidden sm:flex items-center text-quesada font-bold bg-quesada-soft px-3 py-1.5 rounded-full border border-quesada/20">
+          <i data-lucide="shield-check" class="w-4 h-4 mr-1 text-quesada"></i> <span data-i18n="header_badge">Asesoría Notarial Gratuita</span>
         </span>
       </div>
     </div>
@@ -62,12 +73,12 @@
     <!-- Hero / Gancho inicial -->
     <div id="funnel-intro" class="text-center mb-6">
       <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-quesada-soft text-quesada text-xs font-bold mb-2.5 border border-quesada/20">
-        <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Estudio Fiscal Especializado Costa Blanca 2026
+        <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> <span data-i18n="hero_pill">Estudio Fiscal Especializado Costa Blanca 2026</span>
       </div>
-      <h1 class="text-2xl sm:text-4xl font-black text-slate-900 tracking-tight leading-tight">
+      <h1 class="text-2xl sm:text-4xl font-black text-slate-900 tracking-tight leading-tight" id="hero-title">
         ¿Cuánto dinero te quedará <span class="text-quesada underline decoration-quesada/30 decoration-4">REALMENTE limpio</span> al vender tu casa?
       </h1>
-      <p class="mt-2 text-xs sm:text-sm text-slate-600 max-w-xl mx-auto">
+      <p class="mt-2 text-xs sm:text-sm text-slate-600 max-w-xl mx-auto" data-i18n="hero_desc">
         Descubre el saldo exacto que entrará en tu banco deduciendo IRPF, Plusvalía Municipal, cancelación de hipoteca, comisiones y la <strong>exención fiscal total si tienes más de 65 años</strong> o eres <strong>no residente</strong>.
       </p>
     </div>
@@ -90,51 +101,51 @@
       <section id="step-1" class="step-transition space-y-4">
         <div>
           <h2 class="text-lg sm:text-xl font-bold text-slate-800 flex items-center gap-2">
-            <i data-lucide="badge-euro" class="w-5 h-5 text-quesada"></i> Precios de la Operación
+            <i data-lucide="badge-euro" class="w-5 h-5 text-quesada"></i> <span data-i18n="step1_title">Precios de la Operación</span>
           </h2>
-          <p class="text-xs text-slate-500">Calculamos la ganancia patrimonial exacta sujeta a IRPF en la Comunidad Valenciana.</p>
+          <p class="text-xs text-slate-500" data-i18n="step1_subtitle">Calculamos la ganancia patrimonial exacta sujeta a IRPF en la Comunidad Valenciana.</p>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
           <div>
-            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Precio Estimado o Deseado de Venta (€) *</label>
+            <label class="block text-xs font-bold text-slate-700 uppercase mb-1" data-i18n="label_sale_price">Precio Estimado o Deseado de Venta (€) *</label>
             <div class="relative">
               <input type="number" id="sale_price" name="sale_price" min="30000" step="1000" value="210000" required class="w-full pl-4 pr-10 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-quesada font-semibold text-base text-slate-900">
               <span class="absolute right-3.5 top-3 text-slate-400 font-bold text-sm">€</span>
             </div>
-            <span class="text-[11px] text-slate-400">Por cuánto esperas vender tu propiedad.</span>
+            <span class="text-[11px] text-slate-400" data-i18n="hint_sale_price">Por cuánto esperas vender tu propiedad.</span>
           </div>
 
           <div>
-            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Precio al que se compró o heredó (€) *</label>
+            <label class="block text-xs font-bold text-slate-700 uppercase mb-1" data-i18n="label_purchase_price">Precio al que se compró o heredó (€) *</label>
             <div class="relative">
               <input type="number" id="purchase_price" name="purchase_price" min="10000" step="1000" value="125000" required class="w-full pl-4 pr-10 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-quesada font-semibold text-base text-slate-900">
               <span class="absolute right-3.5 top-3 text-slate-400 font-bold text-sm">€</span>
             </div>
-            <span class="text-[11px] text-slate-400">Valor que figura en la escritura original.</span>
+            <span class="text-[11px] text-slate-400" data-i18n="hint_purchase_price">Valor que figura en la escritura original.</span>
           </div>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
           <div>
-            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Municipio del Inmueble *</label>
+            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1" data-i18n="label_city">Municipio del Inmueble *</label>
             <input type="text" id="property_city" name="property_city" required value="Santa Pola" placeholder="Ej. Santa Pola, Gran Alacant, Elche, Alicante..." class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-quesada text-sm">
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Años en propiedad</label>
-            <select name="years_held" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-quesada text-sm">
-              <option value="3">Menos de 5 años</option>
-              <option value="8" selected>Entre 5 y 15 años</option>
-              <option value="18">Entre 15 y 20 años</option>
-              <option value="25">Más de 20 años</option>
+            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1" data-i18n="label_years_held">Años en propiedad</label>
+            <select name="years_held" id="years_held" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-quesada text-sm">
+              <option value="3" data-i18n="years_opt_1">Menos de 5 años</option>
+              <option value="8" selected data-i18n="years_opt_2">Entre 5 y 15 años</option>
+              <option value="18" data-i18n="years_opt_3">Entre 15 y 20 años</option>
+              <option value="25" data-i18n="years_opt_4">Más de 20 años</option>
             </select>
-            <span class="text-[11px] text-slate-400">Determina el coeficiente de Plusvalía Municipal.</span>
+            <span class="text-[11px] text-slate-400" data-i18n="hint_years">Determina el coeficiente de Plusvalía Municipal.</span>
           </div>
         </div>
 
         <div class="flex justify-end pt-3">
           <button type="button" onclick="validateAndGoStep(2)" class="px-6 py-3 bg-quesada hover:bg-quesada-dark text-white font-semibold rounded-xl shadow-md flex items-center gap-2 transition">
-            Continuar a Fiscalidad <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            <span data-i18n="btn_to_fiscal">Continuar a Fiscalidad</span> <i data-lucide="arrow-right" class="w-4 h-4"></i>
           </button>
         </div>
       </section>
@@ -143,22 +154,22 @@
       <section id="step-2" class="step-transition space-y-4 hidden">
         <div>
           <h2 class="text-lg sm:text-xl font-bold text-slate-800 flex items-center gap-2">
-            <i data-lucide="landmark" class="w-5 h-5 text-quesada"></i> Situación Fiscal y Posibles Exenciones
+            <i data-lucide="landmark" class="w-5 h-5 text-quesada"></i> <span data-i18n="step2_title">Situación Fiscal y Posibles Exenciones</span>
           </h2>
-          <p class="text-xs text-slate-500">Comprobamos si puedes acogerte a exenciones notariales de hasta 30.000 € o más.</p>
+          <p class="text-xs text-slate-500" data-i18n="step2_subtitle">Comprobamos si puedes acogerte a exenciones notariales de hasta 30.000 € o más.</p>
         </div>
 
         <!-- Pregunta 1: ¿Es Vivienda Habitual? -->
         <div class="space-y-1.5">
-          <label class="block text-xs font-bold text-slate-700 uppercase">1. ¿Qué uso tiene actualmente la vivienda? *</label>
+          <label class="block text-xs font-bold text-slate-700 uppercase" data-i18n="label_housing_use">1. ¿Qué uso tiene actualmente la vivienda? *</label>
           <div class="grid grid-cols-2 gap-3 text-xs">
             <label class="border-2 border-slate-200 rounded-xl p-3 cursor-pointer hover:border-quesada has-[:checked]:border-quesada has-[:checked]:bg-quesada-soft font-semibold flex items-center gap-2">
               <input type="radio" name="housing_use" value="habitual" class="text-quesada" checked>
-              <span>Vivienda Habitual</span>
+              <span data-i18n="opt_habitual">Vivienda Habitual</span>
             </label>
             <label class="border-2 border-slate-200 rounded-xl p-3 cursor-pointer hover:border-quesada has-[:checked]:border-quesada has-[:checked]:bg-quesada-soft font-semibold flex items-center gap-2">
               <input type="radio" name="housing_use" value="segunda" class="text-quesada">
-              <span>Segunda Residencia / Playa</span>
+              <span data-i18n="opt_segunda">Segunda Residencia / Playa</span>
             </label>
           </div>
         </div>
@@ -167,47 +178,47 @@
         <div class="bg-amber-50/80 border border-amber-200 rounded-xl p-4 space-y-2">
           <div class="flex items-center gap-2">
             <i data-lucide="award" class="w-5 h-5 text-amber-600 shrink-0"></i>
-            <span class="text-xs font-bold uppercase text-amber-900">Exención por Edad (Ley IRPF Art. 33.4.b)</span>
+            <span class="text-xs font-bold uppercase text-amber-900" data-i18n="badge_senior_law">Exención por Edad (Ley IRPF Art. 33.4.b)</span>
           </div>
-          <label class="block text-xs font-bold text-slate-800">¿El titular (o alguno de los titulares) tiene 65 años o más? *</label>
+          <label class="block text-xs font-bold text-slate-800" data-i18n="label_senior_question">¿El titular (o alguno de los titulares) tiene 65 años o más? *</label>
           <div class="grid grid-cols-2 gap-3 text-xs">
             <label class="bg-white border-2 border-slate-200 rounded-lg p-2.5 cursor-pointer hover:border-quesada has-[:checked]:border-quesada has-[:checked]:bg-quesada-soft font-semibold text-center">
               <input type="radio" name="is_over_65" value="si" class="hidden">
-              🎉 Sí, tiene 65 años o más
+              <span data-i18n="opt_senior_yes">🎉 Sí, tiene 65 años o más</span>
             </label>
             <label class="bg-white border-2 border-slate-200 rounded-lg p-2.5 cursor-pointer hover:border-quesada has-[:checked]:border-quesada has-[:checked]:bg-quesada-soft font-semibold text-center">
               <input type="radio" name="is_over_65" value="no" class="hidden" checked>
-              No, menor de 65 años
+              <span data-i18n="opt_senior_no">No, menor de 65 años</span>
             </label>
           </div>
-          <p class="text-[11px] text-amber-800">
+          <p class="text-[11px] text-amber-800" data-i18n="hint_senior_law">
             * En Quesada Inmobiliaria auditamos tu caso para aplicar la exención del 100% de IRPF si es vivienda habitual.
           </p>
         </div>
 
         <!-- Pregunta 3: Residente o No Residente Fiscal -->
         <div class="space-y-1.5">
-          <label class="block text-xs font-bold text-slate-700 uppercase">3. Residencia Fiscal del Propietario *</label>
+          <label class="block text-xs font-bold text-slate-700 uppercase" data-i18n="label_residency">3. Residencia Fiscal del Propietario *</label>
           <div class="grid grid-cols-2 gap-3 text-xs">
             <label class="border-2 border-slate-200 rounded-xl p-3 cursor-pointer hover:border-quesada has-[:checked]:border-quesada has-[:checked]:bg-quesada-soft font-semibold">
               <input type="radio" name="tax_residency" value="residente" class="text-quesada" checked>
-              <span class="block text-slate-800 font-bold">Residente en España</span>
-              <span class="block text-[11px] text-slate-500 font-normal">Tributa en IRPF</span>
+              <span class="block text-slate-800 font-bold" data-i18n="opt_resident">Residente en España</span>
+              <span class="block text-[11px] text-slate-500 font-normal" data-i18n="desc_resident">Tributa en IRPF</span>
             </label>
             <label class="border-2 border-slate-200 rounded-xl p-3 cursor-pointer hover:border-quesada has-[:checked]:border-quesada has-[:checked]:bg-quesada-soft font-semibold">
               <input type="radio" name="tax_residency" value="no_residente" class="text-quesada">
-              <span class="block text-slate-800 font-bold">No Residente (Extranjero)</span>
-              <span class="block text-[11px] text-slate-500 font-normal">Retención 3% Notaría (Mod. 211)</span>
+              <span class="block text-slate-800 font-bold" data-i18n="opt_non_resident">No Residente (Extranjero)</span>
+              <span class="block text-[11px] text-slate-500 font-normal" data-i18n="desc_non_resident">Retención 3% Notaría (Mod. 211)</span>
             </label>
           </div>
         </div>
 
         <div class="flex justify-between pt-3">
           <button type="button" onclick="nextStep(1)" class="px-5 py-2.5 text-slate-600 hover:text-slate-900 font-medium text-sm flex items-center gap-1">
-            <i data-lucide="arrow-left" class="w-4 h-4"></i> Anterior
+            <i data-lucide="arrow-left" class="w-4 h-4"></i> <span data-i18n="btn_previous">Anterior</span>
           </button>
           <button type="button" onclick="nextStep(3)" class="px-6 py-3 bg-quesada hover:bg-quesada-dark text-white font-semibold rounded-xl shadow-md flex items-center gap-2 transition">
-            Siguiente: Hipoteca y Gastos <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            <span data-i18n="btn_to_costs">Siguiente: Hipoteca y Gastos</span> <i data-lucide="arrow-right" class="w-4 h-4"></i>
           </button>
         </div>
       </section>
@@ -216,67 +227,67 @@
       <section id="step-3" class="step-transition space-y-4 hidden">
         <div>
           <h2 class="text-lg sm:text-xl font-bold text-slate-800 flex items-center gap-2">
-            <i data-lucide="receipt" class="w-5 h-5 text-quesada"></i> Cargas Hipotecarias y Gastos de Venta
+            <i data-lucide="receipt" class="w-5 h-5 text-quesada"></i> <span data-i18n="step3_title">Cargas Hipotecarias y Gastos de Venta</span>
           </h2>
-          <p class="text-xs text-slate-500">Liquidación en notaría el día de la firma de escrituras.</p>
+          <p class="text-xs text-slate-500" data-i18n="step3_subtitle">Liquidación en notaría el día de la firma de escrituras.</p>
         </div>
 
         <!-- Hipoteca Pendiente -->
         <div class="border rounded-xl p-4 space-y-3 bg-slate-50/50">
-          <label class="block text-xs font-bold text-slate-700 uppercase">¿Tienes hipoteca pendiente sobre este inmueble?</label>
+          <label class="block text-xs font-bold text-slate-700 uppercase" data-i18n="label_mortgage_q">¿Tienes hipoteca pendiente sobre este inmueble?</label>
           <div class="grid grid-cols-2 gap-3 text-xs">
             <label class="bg-white border rounded-lg p-2.5 cursor-pointer has-[:checked]:border-quesada has-[:checked]:bg-quesada-soft font-semibold text-center">
               <input type="radio" name="has_mortgage" value="no" class="hidden" checked onchange="toggleMortgageInput(false)">
-              No, libre de cargas
+              <span data-i18n="opt_mortgage_no">No, libre de cargas</span>
             </label>
             <label class="bg-white border rounded-lg p-2.5 cursor-pointer has-[:checked]:border-quesada has-[:checked]:bg-quesada-soft font-semibold text-center">
               <input type="radio" name="has_mortgage" value="si" class="hidden" onchange="toggleMortgageInput(true)">
-              Sí, tengo hipoteca activa
+              <span data-i18n="opt_mortgage_yes">Sí, tengo hipoteca activa</span>
             </label>
           </div>
 
           <div id="mortgage-amount-container" class="hidden pt-2">
-            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Saldo pendiente aproximado (€)</label>
+            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1" data-i18n="label_mortgage_balance">Saldo pendiente aproximado (€)</label>
             <div class="relative">
               <input type="number" id="mortgage_balance" name="mortgage_balance" min="0" step="500" value="40000" class="w-full pl-4 pr-10 py-2 rounded-lg border border-slate-300 font-semibold text-sm">
               <span class="absolute right-3.5 top-2.5 text-slate-400 font-bold text-xs">€</span>
             </div>
-            <span class="text-[11px] text-slate-400">* Incluye ~950 € de aranceles de cancelación registral y gestoría bancaria.</span>
+            <span class="text-[11px] text-slate-400" data-i18n="hint_mortgage_fee">* Incluye ~950 € de aranceles de cancelación registral y gestoría bancaria.</span>
           </div>
         </div>
 
         <!-- Honorarios Agencia -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Honorarios Quesada Inmobiliaria (%)</label>
-            <select name="agency_fee_percent" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-quesada text-sm">
-              <option value="5" selected>5% + IVA (Gestión Integral Notaría, Certificados y Marketing)</option>
-              <option value="3">3% + IVA</option>
-              <option value="0">0% (Venta particular sin intermediación)</option>
+            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1" data-i18n="label_agency_fee">Honorarios Quesada Inmobiliaria (%)</label>
+            <select name="agency_fee_percent" id="agency_fee_percent" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-quesada text-sm">
+              <option value="5" selected data-i18n="agency_opt_5">5% + IVA (Gestión Integral Notaría, Certificados y Marketing)</option>
+              <option value="3" data-i18n="agency_opt_3">3% + IVA</option>
+              <option value="0" data-i18n="agency_opt_0">0% (Venta particular sin intermediación)</option>
             </select>
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Certificados y Notas Registrales</label>
-            <input type="text" disabled value="~250 € (CEE + Cédula + Nota Simple)" class="w-full px-4 py-2.5 rounded-lg border border-slate-200 bg-slate-100 text-slate-500 text-xs font-medium">
+            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1" data-i18n="label_docs">Certificados y Notas Registrales</label>
+            <input type="text" disabled id="docs-fixed-input" value="~250 € (CEE + Cédula + Nota Simple)" class="w-full px-4 py-2.5 rounded-lg border border-slate-200 bg-slate-100 text-slate-500 text-xs font-medium">
           </div>
         </div>
 
         <!-- Plazo de venta -->
         <div>
-          <label class="block text-xs font-bold text-slate-700 uppercase mb-1">¿En qué plazo te gustaría vender tu casa? *</label>
-          <select name="sale_urgency" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-quesada text-sm font-semibold">
-            <option value="urgente">Lo antes posible (1 a 2 meses) - ¡Tengo prisa!</option>
-            <option value="medio" selected>En los próximos 3 a 6 meses</option>
-            <option value="largo">Más de 6 meses / Solo calculando opciones</option>
+          <label class="block text-xs font-bold text-slate-700 uppercase mb-1" data-i18n="label_urgency">¿En qué plazo te gustaría vender tu casa? *</label>
+          <select name="sale_urgency" id="sale_urgency" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-quesada text-sm font-semibold">
+            <option value="urgente" data-i18n="urgency_opt_urgent">Lo antes posible (1 a 2 meses) - ¡Tengo prisa!</option>
+            <option value="medio" selected data-i18n="urgency_opt_medium">En los próximos 3 a 6 meses</option>
+            <option value="largo" data-i18n="urgency_opt_long">Más de 6 meses / Solo calculando opciones</option>
           </select>
         </div>
 
         <div class="flex justify-between pt-3">
           <button type="button" onclick="nextStep(2)" class="px-5 py-2.5 text-slate-600 hover:text-slate-900 font-medium text-sm flex items-center gap-1">
-            <i data-lucide="arrow-left" class="w-4 h-4"></i> Anterior
+            <i data-lucide="arrow-left" class="w-4 h-4"></i> <span data-i18n="btn_previous">Anterior</span>
           </button>
           <button type="button" onclick="nextStep(4)" class="px-6 py-3 bg-quesada hover:bg-quesada-dark text-white font-semibold rounded-xl shadow-md flex items-center gap-2 transition">
-            Ver Mi Líquido en Bolsillo <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            <span data-i18n="btn_to_results">Ver Mi Líquido en Bolsillo</span> <i data-lucide="arrow-right" class="w-4 h-4"></i>
           </button>
         </div>
       </section>
@@ -287,26 +298,26 @@
           <div class="w-12 h-12 bg-quesada-soft text-quesada rounded-full flex items-center justify-center mx-auto mb-2 border border-quesada/20">
             <i data-lucide="file-check-2" class="w-6 h-6"></i>
           </div>
-          <h2 class="text-xl sm:text-2xl font-bold text-slate-800">
+          <h2 class="text-xl sm:text-2xl font-bold text-slate-800" data-i18n="step4_title">
             ¡Tu Liquidación Neta está calculada!
           </h2>
-          <p class="text-xs sm:text-sm text-slate-500 max-w-md mx-auto mt-1">
+          <p class="text-xs sm:text-sm text-slate-500 max-w-md mx-auto mt-1" data-i18n="step4_subtitle">
             Indícanos dónde enviarte el informe notarial oficial de Quesada Inmobiliaria con el certificado de ahorro fiscal.
           </p>
         </div>
 
         <div class="space-y-3 pt-2">
           <div>
-            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Nombre y Apellidos *</label>
+            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1" data-i18n="label_name">Nombre y Apellidos *</label>
             <input type="text" id="lead_name" name="lead_name" required placeholder="Ej. Antonio Martínez" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-quesada text-sm">
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">WhatsApp / Teléfono Móvil *</label>
+            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1" data-i18n="label_phone">WhatsApp / Teléfono Móvil *</label>
             <input type="tel" id="lead_phone" name="lead_phone" required placeholder="Ej. +34 689 894 231" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-quesada text-sm">
-            <span class="text-[11px] text-slate-400">Te enviaremos una copia directa a tu WhatsApp al instante.</span>
+            <span class="text-[11px] text-slate-400" data-i18n="hint_phone">Te enviaremos una copia directa a tu WhatsApp al instante.</span>
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Correo Electrónico *</label>
+            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1" data-i18n="label_email">Correo Electrónico *</label>
             <input type="email" id="lead_email" name="lead_email" required placeholder="antonio@ejemplo.com" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-quesada text-sm">
           </div>
         </div>
@@ -315,16 +326,16 @@
         <div class="pt-1">
           <label class="flex items-start text-xs text-slate-500 gap-2 cursor-pointer">
             <input type="checkbox" id="rgpd_consent" required class="mt-0.5 rounded text-quesada focus:ring-quesada">
-            <span>Acepto la política de privacidad de Quesada Inmobiliaria y autorizo la recepción de la simulación fiscal sin compromiso.</span>
+            <span data-i18n="consent_text">Acepto la política de privacidad de Quesada Inmobiliaria y autorizo la recepción de la simulación fiscal sin compromiso.</span>
           </label>
         </div>
 
         <div class="flex justify-between pt-3">
           <button type="button" onclick="nextStep(3)" class="px-5 py-2.5 text-slate-600 hover:text-slate-900 font-medium text-sm flex items-center gap-1">
-            <i data-lucide="arrow-left" class="w-4 h-4"></i> Volver
+            <i data-lucide="arrow-left" class="w-4 h-4"></i> <span data-i18n="btn_previous">Volver</span>
           </button>
           <button type="submit" id="submit-btn" class="px-7 py-3.5 bg-quesada hover:bg-quesada-dark text-white font-bold rounded-xl shadow-lg shadow-quesada/30 flex items-center gap-2 transition transform active:scale-95">
-            <i data-lucide="check-circle-2" class="w-5 h-5"></i> Descubrir Mi Saldo Limpio
+            <i data-lucide="check-circle-2" class="w-5 h-5"></i> <span data-i18n="btn_calculate_submit">Descubrir Mi Saldo Limpio</span>
           </button>
         </div>
       </section>
@@ -336,8 +347,8 @@
       
       <div id="calculating-state" class="py-12 space-y-4 text-center">
         <div class="animate-spin w-12 h-12 border-4 border-quesada border-t-transparent rounded-full mx-auto"></div>
-        <h3 class="text-lg font-bold text-slate-800">Liquidando con el equipo de Quesada Inmobiliaria...</h3>
-        <p class="text-xs text-slate-500">Cruzando tramos IRPF 2026, normativa municipal y exenciones por edad.</p>
+        <h3 class="text-lg font-bold text-slate-800" data-i18n="loading_title">Liquidando con el equipo de Quesada Inmobiliaria...</h3>
+        <p class="text-xs text-slate-500" data-i18n="loading_desc">Cruzando tramos IRPF 2026, normativa municipal y exenciones por edad.</p>
       </div>
 
       <div id="results-content" class="hidden space-y-6">
@@ -348,8 +359,8 @@
             <i data-lucide="sparkles" class="w-5 h-5"></i>
           </div>
           <div>
-            <h4 class="font-extrabold text-sm sm:text-base">¡Exención del 100% de IRPF Aplicada por Quesada Inmobiliaria!</h4>
-            <p class="text-xs text-emerald-800 mt-0.5">
+            <h4 class="font-extrabold text-sm sm:text-base" data-i18n="alert_senior_title">¡Exención del 100% de IRPF Aplicada por Quesada Inmobiliaria!</h4>
+            <p class="text-xs text-emerald-800 mt-0.5" id="senior-desc-p">
               Al ser <strong>mayor de 65 años</strong> y vender tu <strong>vivienda habitual</strong>, la ley te exime de tributar por la ganancia patrimonial. Te estás ahorrando <span id="senior-savings-amount" class="font-bold underline">0 €</span> que se quedan íntegramente en tu bolsillo.
             </p>
           </div>
@@ -361,8 +372,8 @@
             <i data-lucide="globe" class="w-5 h-5"></i>
           </div>
           <div>
-            <h4 class="font-bold text-sm">Régimen Fiscal de No Residente (Modelo 211)</h4>
-            <p class="text-xs text-blue-800 mt-0.5">
+            <h4 class="font-bold text-sm" data-i18n="alert_non_res_title">Régimen Fiscal de No Residente (Modelo 211)</h4>
+            <p class="text-xs text-blue-800 mt-0.5" id="non-res-desc-p">
               El comprador retendrá obligatoriamente un <strong>3% del precio de venta (<span id="retention-3-amount">0 €</span>)</strong> en notaría. En Quesada Inmobiliaria gestionamos la recuperación de retenciones indebidas mediante el Modelo 210.
             </p>
           </div>
@@ -370,13 +381,13 @@
 
         <!-- Tarjeta Principal: Saldo Neto Limpio -->
         <div class="bg-gradient-to-br from-slate-900 via-slate-800 to-quesada-dark text-white rounded-2xl p-6 sm:p-8 text-center shadow-xl relative overflow-hidden">
-          <span class="text-xs font-bold text-quesada-light uppercase tracking-widest bg-white/10 px-3 py-1 rounded-full border border-white/20">
+          <span class="text-xs font-bold text-quesada-light uppercase tracking-widest bg-white/10 px-3 py-1 rounded-full border border-white/20" data-i18n="card_net_label">
             Saldo Líquido Real en tu Cuenta Bancaria
           </span>
           <div class="text-4xl sm:text-5xl font-black my-3 text-white tracking-tight" id="res-net-proceeds">
             0 €
           </div>
-          <p class="text-xs text-slate-300 max-w-md mx-auto">
+          <p class="text-xs text-slate-300 max-w-md mx-auto" id="res-net-caption">
             Dinero neto tras deducir hipoteca, impuestos, gastos de cancelación y honorarios sobre una venta de <span id="res-gross-sale" class="font-bold text-amber-300">0 €</span>.
           </p>
         </div>
@@ -384,47 +395,47 @@
         <!-- Tabla Desglose Detallado -->
         <div>
           <h4 class="font-bold text-slate-800 text-sm uppercase tracking-wider mb-3 flex items-center gap-2">
-            <i data-lucide="receipt-text" class="w-4 h-4 text-quesada"></i> Balance Notarial Certificado por Quesada Inmobiliaria
+            <i data-lucide="receipt-text" class="w-4 h-4 text-quesada"></i> <span data-i18n="table_title">Balance Notarial Certificado por Quesada Inmobiliaria</span>
           </h4>
 
           <div class="border rounded-xl divide-y text-xs sm:text-sm bg-slate-50/50 overflow-hidden">
             
             <div class="flex justify-between items-center p-3 font-semibold bg-quesada-soft text-slate-900">
-              <span>(+) Precio Bruto de Venta</span>
+              <span data-i18n="row_gross">(+) Precio Bruto de Venta</span>
               <span id="detail-gross" class="font-bold">0 €</span>
             </div>
 
             <div class="flex justify-between items-center p-3 text-slate-700">
               <span class="flex items-center gap-1.5">
-                (-) Cancelación de Hipoteca <span id="tag-mortgage" class="text-[10px] text-slate-400">(capital + gestoría/aranceles)</span>
+                <span data-i18n="row_mortgage">(-) Cancelación de Hipoteca</span> <span id="tag-mortgage" class="text-[10px] text-slate-400" data-i18n="tag_mortgage">(capital + gestoría/aranceles)</span>
               </span>
               <span id="detail-mortgage" class="font-semibold text-rose-600">0 €</span>
             </div>
 
             <div class="flex justify-between items-center p-3 text-slate-700">
               <span class="flex items-center gap-1.5">
-                (-) IRPF / Ganancia Patrimonial <span id="tag-irpf-state" class="text-[10px] font-bold text-emerald-600"></span>
+                <span data-i18n="row_irpf">(-) IRPF / Ganancia Patrimonial</span> <span id="tag-irpf-state" class="text-[10px] font-bold text-emerald-600"></span>
               </span>
               <span id="detail-irpf" class="font-semibold text-rose-600">0 €</span>
             </div>
 
             <div class="flex justify-between items-center p-3 text-slate-700">
-              <span>(-) Plusvalía Municipal Estimada (IIVTNU)</span>
+              <span data-i18n="row_plusvalia">(-) Plusvalía Municipal Estimada (IIVTNU)</span>
               <span id="detail-plusvalia" class="font-semibold text-rose-600">0 €</span>
             </div>
 
             <div class="flex justify-between items-center p-3 text-slate-700">
-              <span>(-) Honorarios de Intermediación (Gestión Notarial y Venta con IVA)</span>
+              <span data-i18n="row_agency">(-) Honorarios de Intermediación (Gestión Notarial y Venta con IVA)</span>
               <span id="detail-agency" class="font-semibold text-rose-600">0 €</span>
             </div>
 
             <div class="flex justify-between items-center p-3 text-slate-700">
-              <span>(-) Gastos Documentales (Certificado CEE, Cédula y Nota Simple)</span>
+              <span data-i18n="row_docs">(-) Gastos Documentales (Certificado CEE, Cédula y Nota Simple)</span>
               <span id="detail-docs" class="font-semibold text-rose-600">250 €</span>
             </div>
 
             <div class="flex justify-between items-center p-3.5 bg-slate-900 text-white font-extrabold text-sm sm:text-base">
-              <span>(=) TOTAL NETO LIMPIO A COBRAR</span>
+              <span data-i18n="row_total">(=) TOTAL NETO LIMPIO A COBRAR</span>
               <span id="detail-total-net" class="text-amber-400 font-black">0 €</span>
             </div>
 
@@ -433,11 +444,11 @@
 
         <!-- Call to Action Personalizado -->
         <div id="action-box" class="rounded-xl p-5 space-y-3">
-          <!-- Inyectado por JS con WhatsApp de Juan Pedro Quesada / Quesada Inmobiliaria -->
+          <!-- Inyectado por JS -->
         </div>
 
         <div class="text-center pt-2">
-          <button onclick="resetFunnel()" class="text-xs text-slate-400 hover:text-slate-600 underline">Recalcular con otros datos</button>
+          <button onclick="resetFunnel()" class="text-xs text-slate-400 hover:text-slate-600 underline" data-i18n="btn_recalculate">Recalcular con otros datos</button>
         </div>
 
       </div>
@@ -447,7 +458,7 @@
     <!-- Panel de Configuración -->
     <div class="mt-8 pt-4 border-t border-slate-200 text-center">
       <button onclick="toggleConfigModal()" class="text-xs text-slate-400 hover:text-quesada inline-flex items-center gap-1 font-medium">
-        <i data-lucide="settings" class="w-3.5 h-3.5"></i> Configuración Técnica (Webhook n8n / Teléfono de Asesor)
+        <i data-lucide="settings" class="w-3.5 h-3.5"></i> <span data-i18n="config_button">Configuración Técnica (Webhook n8n / Teléfono de Asesor)</span>
       </button>
     </div>
 
@@ -458,27 +469,27 @@
     <div class="bg-white rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl">
       <div class="flex justify-between items-center border-b pb-3">
         <h4 class="font-bold text-slate-800 text-base flex items-center gap-2">
-          <i data-lucide="webhook" class="w-5 h-5 text-quesada"></i> Ajustes Quesada Inmobiliaria
+          <i data-lucide="webhook" class="w-5 h-5 text-quesada"></i> <span data-i18n="modal_title">Ajustes Quesada Inmobiliaria</span>
         </h4>
         <button onclick="toggleConfigModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
       <div>
-        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Webhook URL (n8n / CRM)</label>
-        <input type="url" id="webhook-url-input" placeholder="https://tu-n8n.com/webhook/lead-vendedor-inmobiliario" class="w-full px-3 py-2 border rounded-lg text-xs font-mono text-slate-800">
+        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1" data-i18n="modal_webhook">Webhook URL (n8n / CRM)</label>
+        <input type="url" id="webhook-url-input" placeholder="https://tu-n8n.com/webhook/lead-vendedor-quesada" class="w-full px-3 py-2 border rounded-lg text-xs font-mono text-slate-800">
       </div>
       <div>
-        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Teléfono WhatsApp de Juan Pedro Quesada</label>
+        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1" data-i18n="modal_phone">Teléfono WhatsApp de Juan Pedro Quesada</label>
         <input type="tel" id="agent-phone-input" value="+34689894231" class="w-full px-3 py-2 border rounded-lg text-xs font-mono text-slate-800">
       </div>
       <div class="flex justify-end gap-2 pt-2">
-        <button onclick="saveConfig()" class="px-4 py-2 bg-quesada text-white rounded-lg text-xs font-bold hover:bg-quesada-dark">Guardar Cambios</button>
+        <button onclick="saveConfig()" class="px-4 py-2 bg-quesada text-white rounded-lg text-xs font-bold hover:bg-quesada-dark" data-i18n="modal_save">Guardar Cambios</button>
       </div>
     </div>
   </div>
 
   <!-- Footer Corporativo Quesada Inmobiliaria -->
   <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500 space-y-2">
-    <p class="font-bold text-slate-700">Quesada Inmobiliaria • Expertos en Venta y Fiscalidad Inmobiliaria en Costa Blanca</p>
+    <p class="font-bold text-slate-700" data-i18n="footer_claim">Quesada Inmobiliaria • Expertos en Venta y Fiscalidad Inmobiliaria en Costa Blanca</p>
     <p>Santa Pola • Gran Alacant • Torrevieja • Elche • Alicante</p>
     <p class="text-slate-400">Tel: <a href="tel:+34689894231" class="hover:underline">+34 689 894 231</a> | Email: <a href="mailto:info@quesadainmobiliaria.com" class="hover:underline">info@quesadainmobiliaria.com</a> | Web: <a href="https://www.quesadainmobiliaria.com" target="_blank" class="hover:underline">quesadainmobiliaria.com</a></p>
   </footer>
